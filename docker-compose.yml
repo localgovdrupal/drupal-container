@@ -9,7 +9,9 @@ services:
     image: localgovdrupal/apache-php:php7.2
     container_name: drupal
     environment:
-      SIMPLETEST_BASE_URL: 'http://localhost'
+      SIMPLETEST_BASE_URL: 'http://drupal'
+      SIMPLETEST_DB: 'mysql://database:database@database/database'
+      MINK_DRIVER_ARGS_WEBDRIVER: '["chrome", {"browserName":"chrome","chromeOptions":{"args":["--disable-gpu","--headless", "--no-sandbox", "--disable-dev-shm-usage"]}}, "http://chrome:9515"]'
     ports:
       - "80:80"
     volumes:
@@ -25,3 +27,18 @@ services:
       MYSQL_PASSWORD: database
     ports:
       - "3306:3306"
+
+  chrome:
+    image: drupalci/webdriver-chromedriver:production
+    ulimits:
+      core:
+        soft: -1
+        hard: -1
+    ports:
+      - "4444:4444"
+      - "9515:9515"
+    entrypoint:
+      - chromedriver
+      - "--log-path=/tmp/chromedriver.log"
+      - "--verbose"
+      - "--whitelisted-ips="
