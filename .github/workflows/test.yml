@@ -21,4 +21,5 @@ jobs:
         run: docker-compose up -d
 
       - name: Run tests
-        run: ./run-test.sh
+        run: ./run-tests.sh
+        shell: bash
