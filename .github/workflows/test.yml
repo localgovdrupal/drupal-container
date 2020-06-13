@@ -1,0 +1,24 @@
+name: Test LocalGovDrupal
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Create LocalGovDrupal project
+        run: composer create-project --stability dev localgovdrupal/localgov-project html
+
+      - name: Start Docker environment
+        run: docker-compose up -d
+
+      - name: Run tests
+        run: ./run-test.sh
