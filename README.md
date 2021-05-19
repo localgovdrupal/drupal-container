@@ -1,4 +1,4 @@
-# LocalGovDrupal Docker container
+# LocalGov Drupal Docker container
 
 Container for LocalGov Drupal CI, includes Apache, PHP and Composer.
 
@@ -11,8 +11,8 @@ Something like:
 ```bash
 git clone git@github.com:localgovdrupal/drupal-container.git localgovdrupal-testing
 cd localgovdrupal-testing
+composer create-project --stability dev localgovdrupal/localgov-project ./html
 docker-compose up -d
-docker exec -u docker -t drupal /usr/local/bin/composer create-project --stability dev localgovdrupal/localgov-project /var/www/html
 ./run-tests.sh
 docker-compose stop
 ```
@@ -24,6 +24,6 @@ The Docker image lives in [Docker Hub](https://hub.docker.com/repository/docker/
 Build with:
 
 ```bash
-docker build . -t localgovdrupal/apache-php:php7.2
-docker push localgovdrupal/apache-php:php7.2
+docker build . -t localgovdrupal/apache-php:php7.4
+docker push localgovdrupal/apache-php:php7.4
 ```

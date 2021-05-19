@@ -1,34 +1,44 @@
 ##
-# LocalGovDrupal web container.
+# LocalGov Drupal web container.
 
-FROM ubuntu:20.04
+FROM php:7.4-apache
 
-ENV DEBIAN_FRONTEND noninteractive
-
-# Install packages.
+# Install PHP and related packages.
 RUN apt-get update && \
     apt-get install -y \
-      apache2 \
       curl \
       git \
-      mysql-client \
+      libcurl4-openssl-dev \
+      libfreetype6-dev \
+      libicu-dev \
+      libjpeg62-turbo-dev \
+      libonig-dev \
+      libpng-dev \
+      libxml2-dev \
+      libzip-dev \
+      mariadb-client \
       patch \
-      php7.4 \
-      php7.4-cli \
-      php7.4-common \
-      php7.4-curl \
-      php7.4-json \
-      php7.4-gd \
-      php7.4-mbstring \
-      php7.4-mysql \
-      php7.4-opcache \
-      php7.4-sqlite \
-      php7.4-xml \
-      php7.4-zip \
-      php-memcached  && \
-    apt-get clean
+      zlib1g-dev && \
+    docker-php-ext-configure gd --with-freetype --with-jpeg  && \
+    docker-php-ext-install -j$(nproc) gd && \
+    docker-php-ext-install \
+      bcmath \
+      curl \
+      gettext \
+      intl \
+      mbstring \
+      mysqli \
+      pdo \
+      pdo_mysql \
+      zip  && \
+    apt-get clean && \
+    docker-php-source delete && \
+    rm -rf /tmp/* /var/cache/*
 
-# Add a docker user
+# Install Composer.
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Add a docker user.
 RUN useradd -m -s /bin/bash -G www-data -p docker docker
 
 # Configure Apache.
@@ -50,11 +60,7 @@ RUN a2enmod \
     rm -fr /var/www/*
 
 # Configure PHP.
-COPY config/php/docker.ini /etc/php/7.4/conf.d/docker.ini
-RUN ln -s /etc/php/7.4/conf.d/docker.ini /etc/php/7.4/apache2/conf.d/90-docker.ini
-
-# Install Composer,
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+COPY config/php/docker.ini /usr/local/etc/php/conf.d/localgovdrupal.ini
 
 EXPOSE 80
 
