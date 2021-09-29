@@ -10,13 +10,24 @@ services:
     container_name: drupal
     environment:
       SIMPLETEST_BASE_URL: 'http://drupal'
-      SIMPLETEST_DB: 'sqlite://localhost/dev/shm/test.sqlite'
+      SIMPLETEST_DB: 'mysql://database:database@database/database'
       MINK_DRIVER_ARGS_WEBDRIVER: '["chrome", {"browserName":"chrome","chromeOptions":{"args":["--disable-gpu","--headless", "--no-sandbox", "--disable-dev-shm-usage"]}}, "http://chrome:9515"]'
       SYMFONY_DEPRECATIONS_HELPER: weak
     ports:
       - "80:80"
     volumes:
       - ./html:/var/www/html
+
+  database:
+    image: mariadb:latest
+    container_name: database
+    environment:
+      MARIADB_RANDOM_ROOT_PASSWORD: "yes"
+      MARIADB_DATABASE: database
+      MARIADB_USER: database
+      MARIADB_PASSWORD: database
+    expose:
+      - "3306"
 
   chrome:
     image: drupalci/webdriver-chromedriver:production
