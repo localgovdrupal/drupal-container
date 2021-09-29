@@ -1,0 +1,137 @@
+name: Test the time taken to run different testing regimes.
+
+jobs:
+  
+  build:
+    name: Build LocalGov Drupal site.
+    runs-on: ubuntu-latest
+    
+    steps:
+      
+      - name: Cached workspace
+        uses: actions/cache@v2
+        with:
+          path: ./html
+          key: localgov-build-${{ github.run_id }}-${{ secrets.CACHE_VERSION }}
+      
+      - name: setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+
+      - uses: actions/checkout@v2
+      
+      - name: Create LocalGov Drupal project
+        run: composer create-project --stability dev localgovdrupal/localgov-project ./html
+
+  test1:
+    name: PHPUnit and MariDB
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      
+      - name: Check out branch
+        uses: actions/checkout@v2
+      
+      - name: Cached workspace
+        uses: actions/cache@v2
+        with:
+          path: ./html
+          key: localgov-build-${{ github.run_id }}-${{ secrets.CACHE_VERSION }}
+          restore-keys: |
+            localgov-build-
+
+      - name: Start testing environment
+        run: docker-compose up -d
+        
+      - name: Run PHPUnit tests
+        run: |
+          mkdir -p ./html/web/sites/simpletest && chmod 777 ./html/web/sites/simpletest
+          sed -i "s#http://localgov.lndo.site#http://drupal#" ./html/phpunit.xml.dist
+          docker exec -t drupal bash -c 'chown docker:docker -R /var/www/html'
+          docker exec -u docker -t drupal bash -c "cd /var/www/html && ./bin/phpunit"
+
+    test2:
+      name: Paratest and MariaDB
+      needs: build
+      runs-on: ubuntu-latest
+
+      steps:
+        
+        - name: Check out branch
+          uses: actions/checkout@v2
+        
+        - name: Cached workspace
+          uses: actions/cache@v2
+          with:
+            path: ./html
+            key: localgov-build-${{ github.run_id }}-${{ secrets.CACHE_VERSION }}
+            restore-keys: |
+              localgov-build-
+
+        - name: Start testing environment
+          run: docker-compose up -d
+          
+        - name: Run PHPUnit tests
+          run: |
+            mkdir -p ./html/web/sites/simpletest && chmod 777 ./html/web/sites/simpletest
+            sed -i "s#http://localgov.lndo.site#http://drupal#" ./html/phpunit.xml.dist
+            docker exec -t drupal bash -c 'chown docker:docker -R /var/www/html'
+            docker exec -u docker -t drupal bash -c "cd /var/www/html && ./bin/paratest --processes=4"
+
+      test3:
+        name: PHPUnit and SQLite
+        needs: build
+        runs-on: ubuntu-latest
+
+        steps:
+          
+          - name: Check out branch
+            uses: actions/checkout@v2
+          
+          - name: Cached workspace
+            uses: actions/cache@v2
+            with:
+              path: ./html
+              key: localgov-build-${{ github.run_id }}-${{ secrets.CACHE_VERSION }}
+              restore-keys: |
+                localgov-build-
+
+          - name: Start testing environment
+            run: docker-compose up -d
+            
+          - name: Run PHPUnit tests
+            run: |
+              mkdir -p ./html/web/sites/simpletest && chmod 777 ./html/web/sites/simpletest
+              sed -i "s#http://localgov.lndo.site#http://drupal#; s#mysql://database:database@database/database#sqlite://localhost//dev/shm/test.sqlite#" ./html/phpunit.xml.dist
+              docker exec -t drupal bash -c 'chown docker:docker -R /var/www/html'
+              docker exec -u docker -t drupal bash -c "cd /var/www/html && ./bin/phpunit"
+
+        test4:
+          name: Paratest and SQLite
+          needs: build
+          runs-on: ubuntu-latest
+
+          steps:
+            
+            - name: Check out branch
+              uses: actions/checkout@v2
+            
+            - name: Cached workspace
+              uses: actions/cache@v2
+              with:
+                path: ./html
+                key: localgov-build-${{ github.run_id }}-${{ secrets.CACHE_VERSION }}
+                restore-keys: |
+                  localgov-build-
+
+            - name: Start testing environment
+              run: docker-compose up -d
+              
+            - name: Run PHPUnit tests
+              run: |
+                mkdir -p ./html/web/sites/simpletest && chmod 777 ./html/web/sites/simpletest
+                sed -i "s#http://localgov.lndo.site#http://drupal#; s#mysql://database:database@database/database#sqlite://localhost//dev/shm/test.sqlite#" ./html/phpunit.xml.dist
+                docker exec -t drupal bash -c 'chown docker:docker -R /var/www/html'
+                docker exec -u docker -t drupal bash -c "cd /var/www/html && ./bin/paratest --processes=4"
