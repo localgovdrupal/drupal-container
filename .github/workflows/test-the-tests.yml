@@ -1,5 +1,7 @@
 name: Test the time taken to run different testing regimes.
 
+on: push
+
 jobs:
   
   build:
