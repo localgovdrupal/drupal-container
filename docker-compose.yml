@@ -1,35 +1,40 @@
 ##
 # LocalGov Drupal CI
 ---
-version: '3'
+version: '2.4'
 
 services:
 
   drupal:
     image: localgovdrupal/apache-php:php7.4
     container_name: drupal
+    depends_on:
+      database:
+        condition: service_healthy
+    ports:
+      - "80:80"
     environment:
       SIMPLETEST_BASE_URL: 'http://drupal'
       SIMPLETEST_DB: 'mysql://database:database@database/database'
       MINK_DRIVER_ARGS_WEBDRIVER: '["chrome", {"browserName":"chrome","chromeOptions":{"args":["--disable-gpu","--headless", "--no-sandbox", "--disable-dev-shm-usage"]}}, "http://chrome:9515"]'
       SYMFONY_DEPRECATIONS_HELPER: weak
-    ports:
-      - "80:80"
-    depends_on:
-      - "database"
     volumes:
       - ./html:/var/www/html
 
   database:
     image: mariadb:latest
     container_name: database
+    ports:
+      - "3306:3306"
     environment:
       MARIADB_RANDOM_ROOT_PASSWORD: "yes"
       MARIADB_DATABASE: database
       MARIADB_USER: database
       MARIADB_PASSWORD: database
-    expose:
-      - "3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 100
 
   chrome:
     image: drupalci/webdriver-chromedriver:production
