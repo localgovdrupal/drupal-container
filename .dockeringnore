@@ -1,0 +1,4 @@
+# Ignore files during the Docker build.
+/.git
+/.github
+/html
