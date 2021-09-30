@@ -27,6 +27,9 @@ fi
 # PHPUnit tests.
 echo "Running tests"
 docker exec -t drupal bash -c "mkdir -p /var/www/html/web/sites/simpletest && chmod 777 /var/www/html/web/sites/simpletest"
+# Older versions of Paratest (the one required by LocalGov 1.x) don't pickup
+# environmental variables, so it's necessary tochange the config file directly.
+docker exec -u docker -t drupal bash -c 'sed -i "s#http://localgov.lndo.site#http://drupal#" /var/www/html/phpunit.xml.dist'
 docker exec -u docker -t drupal bash -c "cd /var/www/html && ./bin/paratest --processes=4"
 if [ $? -ne 0 ]; then
   ((RESULT++))

@@ -11,6 +11,8 @@ services:
     depends_on:
       database:
         condition: service_healthy
+      chrome:
+        condition: service_started
     ports:
       - "80:80"
     environment:
@@ -38,13 +40,14 @@ services:
 
   chrome:
     image: drupalci/webdriver-chromedriver:production
+    container_name: chrome
+    ports:
+      - "4444:4444"
+      - "9515:9515"
     ulimits:
       core:
         soft: -1
         hard: -1
-    ports:
-      - "4444:4444"
-      - "9515:9515"
     entrypoint:
       - chromedriver
       - "--log-path=/tmp/chromedriver.log"
