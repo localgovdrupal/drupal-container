@@ -11,7 +11,7 @@ Something like:
 ```bash
 git clone git@github.com:localgovdrupal/drupal-container.git localgovdrupal-testing
 cd localgovdrupal-testing
-composer create-project --stability dev localgovdrupal/localgov-project ./html
+composer create-project --stability dev --keep-vcs localgovdrupal/localgov-project ./html
 docker-compose up -d
 ./run-tests.sh
 docker-compose stop

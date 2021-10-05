@@ -19,7 +19,7 @@ fi
 
 # Deprecated code checks.
 echo "Checking for deprecated code"
-docker exec -t drupal bash -c "cd /var/www/html && ./bin/phpstan analyse -c ./phpstan.neon ./web/profiles/contrib/localgov/ ./web/modules/contrib/localgov_*"
+docker exec -t drupal bash -c "cd /var/www/html && ./bin/phpstan analyse -c ./phpstan.neon ./web/profiles/contrib/localgov/ ./web/modules/contrib/localgov_* ./web/themes/contrib/localgov_*"
 if [ $? -ne 0 ]; then
   ((RESULT++))
 fi
@@ -27,9 +27,9 @@ fi
 # PHPUnit tests.
 echo "Running tests"
 docker exec -t drupal bash -c "mkdir -p /var/www/html/web/sites/simpletest && chmod 777 /var/www/html/web/sites/simpletest"
-# Update PHPUnit's env var declarations; Paratest does not pass these to PHPUnit :(
-docker exec -u docker -t drupal bash -c 'sed -i "s#http://localgov.lndo.site#http://drupal#; s#mysql://database:database@database/database#sqlite://localhost//dev/shm/test.sqlite#" /var/www/html/phpunit.xml.dist'
-#docker exec -u docker -t drupal bash -c "cd /var/www/html && ./bin/phpunit --testdox --verbose --debug"
+# Older versions of Paratest (the one required by LocalGov 1.x) don't pickup
+# environmental variables, so it's necessary to change the config file directly.
+docker exec -u docker -t drupal bash -c 'sed -i "s#http://localgov.lndo.site#http://drupal#" /var/www/html/phpunit.xml.dist'
 docker exec -u docker -t drupal bash -c "cd /var/www/html && ./bin/paratest --processes=4"
 if [ $? -ne 0 ]; then
   ((RESULT++))

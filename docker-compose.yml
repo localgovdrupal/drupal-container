@@ -1,32 +1,51 @@
 ##
 # LocalGov Drupal CI
 ---
-version: '3'
-
 services:
 
   drupal:
     image: localgovdrupal/apache-php:php7.4
     container_name: drupal
-    environment:
-      SIMPLETEST_BASE_URL: 'http://drupal'
-      SIMPLETEST_DB: 'sqlite://localhost/dev/shm/test.sqlite'
-      MINK_DRIVER_ARGS_WEBDRIVER: '["chrome", {"browserName":"chrome","chromeOptions":{"args":["--disable-gpu","--headless", "--no-sandbox", "--disable-dev-shm-usage"]}}, "http://chrome:9515"]'
-      SYMFONY_DEPRECATIONS_HELPER: weak
+    depends_on:
+      database:
+        condition: service_healthy
+      chrome:
+        condition: service_started
     ports:
       - "80:80"
+    environment:
+      SIMPLETEST_BASE_URL: 'http://drupal'
+      SIMPLETEST_DB: 'mysql://database:database@database/database'
+      MINK_DRIVER_ARGS_WEBDRIVER: '["chrome", {"browserName":"chrome","chromeOptions":{"args":["--disable-gpu","--headless", "--no-sandbox", "--disable-dev-shm-usage"]}}, "http://chrome:9515"]'
+      SYMFONY_DEPRECATIONS_HELPER: weak
     volumes:
       - ./html:/var/www/html
 
+  database:
+    image: mariadb:latest
+    container_name: database
+    ports:
+      - "3306:3306"
+    environment:
+      MARIADB_RANDOM_ROOT_PASSWORD: "yes"
+      MARIADB_DATABASE: database
+      MARIADB_USER: database
+      MARIADB_PASSWORD: database
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 100
+
   chrome:
     image: drupalci/webdriver-chromedriver:production
+    container_name: chrome
+    ports:
+      - "4444:4444"
+      - "9515:9515"
     ulimits:
       core:
         soft: -1
         hard: -1
-    ports:
-      - "4444:4444"
-      - "9515:9515"
     entrypoint:
       - chromedriver
       - "--log-path=/tmp/chromedriver.log"
