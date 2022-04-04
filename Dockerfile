@@ -1,7 +1,7 @@
 ##
 # LocalGov Drupal web container.
 
-FROM php:7.4-apache
+FROM php:8.1-apache
 
 # Install PHP and related packages.
 RUN apt-get update && \
