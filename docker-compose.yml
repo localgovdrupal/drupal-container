@@ -18,6 +18,13 @@ services:
       SIMPLETEST_DB: 'mysql://database:database@database/database'
       MINK_DRIVER_ARGS_WEBDRIVER: '["chrome", {"browserName":"chrome","chromeOptions":{"args":["--disable-gpu","--headless", "--no-sandbox", "--disable-dev-shm-usage"]}}, "http://chrome:9515"]'
       SYMFONY_DEPRECATIONS_HELPER: weak
+    extra_hosts:
+      - "group-a1.drupal:127.0.0.1"
+      - "group-a2.drupal:127.0.0.1"
+      - "group-a3.drupal:127.0.0.1"
+      - "group-b1.drupal:127.0.0.1"
+      - "group-b2.drupal:127.0.0.1"
+      - "group-b3.drupal:127.0.0.1"
     volumes:
       - ./html:/var/www/html
 
