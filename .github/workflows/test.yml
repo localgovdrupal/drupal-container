@@ -12,13 +12,13 @@ jobs:
   test:
     name: Build and test LocalGov Drupal
     runs-on: ubuntu-latest
-
+    
+    
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - localgov-version: "1.x"
-          - localgov-version: "2.x"
+        localgov-version:
+          - '2.x'
 
     steps:
 
