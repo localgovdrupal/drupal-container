@@ -9,14 +9,14 @@ services:
     depends_on:
       database:
         condition: service_healthy
-      chrome:
+      chromedriver:
         condition: service_started
     ports:
       - "80:80"
     environment:
       SIMPLETEST_BASE_URL: 'http://drupal'
       SIMPLETEST_DB: 'mysql://database:database@database/database'
-      MINK_DRIVER_ARGS_WEBDRIVER: '["chrome", {"browserName":"chrome","chromeOptions":{"args":["--disable-gpu","--headless", "--no-sandbox", "--disable-dev-shm-usage"]}}, "http://chrome:9515"]'
+      MINK_DRIVER_ARGS_WEBDRIVER: '["chrome", { "chromeOptions": { "w3c": false } }, "http://chromedriver:4444/wd/hub"]'
       SYMFONY_DEPRECATIONS_HELPER: weak
     extra_hosts:
       - "group-a1.drupal:127.0.0.1"
@@ -43,9 +43,14 @@ services:
       timeout: 5s
       retries: 100
 
-  chrome:
-    image: drupalci/webdriver-chromedriver:production
-    container_name: chrome
+  chromedriver:
+    image: robcherry/docker-chromedriver:latest
+    container_name: chromedriver
+    environment:
+      CHROMEDRIVER_WHITELISTED_IPS: ""
+      CHROMEDRIVER_URL_BASE: "/wd/hub"
+    security_opt:
+      - seccomp:unconfined
     ports:
       - "4444:4444"
       - "9515:9515"
@@ -53,8 +58,4 @@ services:
       core:
         soft: -1
         hard: -1
-    entrypoint:
-      - chromedriver
-      - "--log-path=/tmp/chromedriver.log"
-      - "--verbose"
-      - "--whitelisted-ips="
+    entrypoint: ["/usr/local/bin/supervisord", "-c", "/etc/supervisord.conf"]
