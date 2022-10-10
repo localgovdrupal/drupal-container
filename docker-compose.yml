@@ -44,18 +44,11 @@ services:
       retries: 100
 
   chromedriver:
-    image: robcherry/docker-chromedriver:latest
+    image: selenium/standalone-chrome:latest
     container_name: chromedriver
     environment:
-      CHROMEDRIVER_WHITELISTED_IPS: ""
-      CHROMEDRIVER_URL_BASE: "/wd/hub"
-    security_opt:
-      - seccomp:unconfined
+      START_XVBF: 'false'
     ports:
       - "4444:4444"
-      - "9515:9515"
-    ulimits:
-      core:
-        soft: -1
-        hard: -1
-    entrypoint: ["/usr/local/bin/supervisord", "-c", "/etc/supervisord.conf"]
+    volumes:
+      - /dev/shm:/dev/shm
