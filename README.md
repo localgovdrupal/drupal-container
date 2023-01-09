@@ -27,3 +27,11 @@ Build with:
 docker build . -t localgovdrupal/apache-php:php7.4
 docker push localgovdrupal/apache-php:php7.4
 ```
+
+## Maintainers
+
+This project is currently maintained by: 
+
+ - Finn Lewis: https://github.com/finnlewis 
+ - Stephen Cox: https://github.com/stephen-cox
+ 
