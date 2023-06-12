@@ -29,7 +29,7 @@ services:
       - ./html:/var/www/html
 
   database:
-    image: mariadb:latest
+    image: mariadb:10.9.6
     container_name: database
     ports:
       - "3306:3306"
