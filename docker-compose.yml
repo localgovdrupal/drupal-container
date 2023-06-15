@@ -39,7 +39,7 @@ services:
       MARIADB_USER: database
       MARIADB_PASSWORD: database
     healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      test: ["CMD", "/usr/local/bin/healthcheck.sh", "--connect"]
       timeout: 5s
       retries: 100
 
