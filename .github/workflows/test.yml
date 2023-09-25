@@ -18,14 +18,14 @@ jobs:
       fail-fast: false
       matrix:
         localgov-version:
-          - '2.x'
+          - '3.x'
 
     steps:
 
       - name: setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
+          php-version: '8.2'
 
       - uses: actions/checkout@v2
 

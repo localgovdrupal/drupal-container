@@ -4,7 +4,7 @@
 services:
 
   drupal:
-    image: localgovdrupal/apache-php:php8.1
+    image: localgovdrupal/apache-php:php8.2
     container_name: drupal
     depends_on:
       database:
