@@ -25,6 +25,12 @@ services:
       - "group-b1.drupal:127.0.0.1"
       - "group-b2.drupal:127.0.0.1"
       - "group-b3.drupal:127.0.0.1"
+      - "group-0.drupal:127.0.0.1"
+      - "group-1.drupal:127.0.0.1"
+      - "group-2.drupal:127.0.0.1"
+      - "group-3.drupal:127.0.0.1"
+      - "group-4.drupal:127.0.0.1"
+      - "group-5.drupal:127.0.0.1"
     volumes:
       - ./html:/var/www/html
 
