@@ -10,6 +10,9 @@ docker exec -t drupal bash -c "chown -R docker:docker /var/www/html"
 # Ensure everything is up to date.
 docker exec -u docker -t drupal bash -c "cd /var/www/html && composer install"
 
+# Obtain all dev dependencies for LocalGov Drupal
+docker exec -u docker -t drupal bash -c "jq --raw-output '.packages[] | select(.name | startswith("localgovdrupal/")) | ."require-dev" | values | to_entries[] | @sh "\(.key):\(.value)"' ./html/composer.lock | sort | uniq | xargs composer --working-dir=./html require --dev --no-interaction"
+
 # Coding standards checks.
 echo "Checking coding standards"
 docker exec -t drupal bash -c "cd /var/www/html && ./bin/phpcs -p"
