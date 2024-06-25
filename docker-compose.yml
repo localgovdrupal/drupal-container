@@ -49,7 +49,7 @@ services:
       timeout: 5s
       retries: 100
 
-  chrome:
+  chromedriver:
     image: drupalci/webdriver-chromedriver:production
     container_name: chromedriver
     ulimits:
