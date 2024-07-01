@@ -16,7 +16,7 @@ services:
     environment:
       SIMPLETEST_BASE_URL: 'http://drupal'
       SIMPLETEST_DB: 'mysql://database:database@database/database'
-      MINK_DRIVER_ARGS_WEBDRIVER: '["chrome", { "chromeOptions": { "w3c": false } }, "http://chromedriver:4444/wd/hub"]'
+      MINK_DRIVER_ARGS_WEBDRIVER: '["chrome", {"browserName": "chrome", "goog:chromeOptions": {"args": ["--disable-gpu","--headless", "--no-sandbox", "--disable-dev-shm-usage"]}}, "http://chromedriver:9515"]'
       SYMFONY_DEPRECATIONS_HELPER: weak
     extra_hosts:
       - "group-a1.drupal:127.0.0.1"
@@ -50,11 +50,18 @@ services:
       retries: 100
 
   chromedriver:
-    image: selenium/standalone-chrome:106.0
+    image: drupalci/webdriver-chromedriver:production
     container_name: chromedriver
-    environment:
-      START_XVBF: 'false'
+    ulimits:
+      core:
+        soft: -1
+        hard: -1
     ports:
       - "4444:4444"
-    volumes:
-      - /dev/shm:/dev/shm
+      - "9515:9515"
+    entrypoint:
+      - chromedriver
+      - "--log-path=/tmp/chromedriver.log"
+      - "--verbose"
+      - "--allowed-ips="
+      - "--allowed-origins=*" 
