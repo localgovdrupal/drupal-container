@@ -24,8 +24,9 @@ The Docker image lives in [Docker Hub](https://hub.docker.com/repository/docker/
 Build with:
 
 ```bash
-docker build . -t localgovdrupal/apache-php:php7.4
-docker push localgovdrupal/apache-php:php7.4
+export branch=$(git symbolic-ref --short HEAD)
+docker build . -t localgovdrupal/apache-php:$branch
+docker push localgovdrupal/apache-php:$branch
 ```
 
 ## Maintainers
@@ -34,4 +35,3 @@ This project is currently maintained by:
 
  - Finn Lewis: https://github.com/finnlewis 
  - Stephen Cox: https://github.com/stephen-cox
- 
