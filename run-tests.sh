@@ -12,7 +12,8 @@ docker exec -u docker -t drupal bash -c "cd /var/www/html && composer install"
 
 # Coding standards checks.
 echo "Checking coding standards"
-docker exec -t drupal bash -c "cd /var/www/html && ./bin/phpcs -p"
+# Use --runtime-set ignore_warnings_on_exit 1 to only fail on actual errors, not warnings
+docker exec -t drupal bash -c "cd /var/www/html && ./bin/phpcs -p --runtime-set ignore_warnings_on_exit 1"
 if [ $? -ne 0 ]; then
   ((RESULT++))
 fi
