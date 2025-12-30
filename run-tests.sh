@@ -30,6 +30,9 @@ docker exec -t drupal bash -c "mkdir -p /var/www/html/web/sites/simpletest && ch
 # Older versions of Paratest (the one required by LocalGov 1.x) don't pickup
 # environmental variables, so it's necessary to change the config file directly.
 docker exec -u docker -t drupal bash -c 'sed -i "s#http://localgov.lndo.site#http://drupal#" /var/www/html/phpunit.xml.dist'
+# Add SYMFONY_DEPRECATIONS_HELPER to phpunit.xml.dist to prevent deprecation notices
+# from causing test failures - Drupal core and contrib have many deprecations
+docker exec -u docker -t drupal bash -c 'sed -i "/<env name=\"SIMPLETEST_BASE_URL\"/a\    <env name=\"SYMFONY_DEPRECATIONS_HELPER\" value=\"disabled\"/>" /var/www/html/phpunit.xml.dist'
 # Use PHPUnit directly instead of Paratest to avoid JUnit XML parsing bugs
 # See: https://github.com/localgovdrupal/localgov_subsites/issues/140
 # Set SYMFONY_DEPRECATIONS_HELPER=disabled to prevent deprecation notices from causing test failures
