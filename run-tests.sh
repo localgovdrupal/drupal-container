@@ -33,6 +33,8 @@ docker exec -u docker -t drupal bash -c 'sed -i "s#http://localgov.lndo.site#htt
 # Add SYMFONY_DEPRECATIONS_HELPER to phpunit.xml.dist to prevent deprecation notices
 # from causing test failures - Drupal core and contrib have many deprecations
 docker exec -u docker -t drupal bash -c 'sed -i "/<env name=\"SIMPLETEST_BASE_URL\"/a\    <env name=\"SYMFONY_DEPRECATIONS_HELPER\" value=\"disabled\"/>" /var/www/html/phpunit.xml.dist'
+# Remove the Symfony deprecation listener that causes exit code 1 even when tests pass
+docker exec -u docker -t drupal bash -c 'sed -i "/<listener class=\"Symfony.*SymfonyTestsListener\"/,/<\/listener>/d" /var/www/html/phpunit.xml.dist'
 # Use PHPUnit directly instead of Paratest to avoid JUnit XML parsing bugs
 # See: https://github.com/localgovdrupal/localgov_subsites/issues/140
 # Set SYMFONY_DEPRECATIONS_HELPER=disabled to prevent deprecation notices from causing test failures
