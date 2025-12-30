@@ -33,7 +33,7 @@ jobs:
         run: composer create-project --stability dev localgovdrupal/localgov-project ./html "${{ matrix.localgov-version }}"
 
       - name: Install optional module dependencies for tests
-        run: composer --working-dir=./html require --dev drupal/group
+        run: composer --working-dir=./html require --dev drupal/group drupal/facets_form:'^1.3'
 
       - name: Obtain all dev dependencies for LocalGov Drupal
         run: jq --raw-output '.packages[] | select(.name | startswith("localgovdrupal/")) | ."require-dev" | values | to_entries[] | @sh "\(.key):\(.value)"' ./html/composer.lock | sort | uniq | xargs composer --working-dir=./html require --dev --no-interaction
