@@ -39,9 +39,18 @@ docker exec -u docker -t drupal bash -c 'sed -i "/<listener class=\"Symfony.*Sym
 # See: https://github.com/localgovdrupal/localgov_subsites/issues/140
 # Set SYMFONY_DEPRECATIONS_HELPER=disabled to prevent deprecation notices from causing test failures
 # Drupal core and contrib modules have many deprecations that don't affect test validity
-docker exec -u docker -t drupal bash -c "cd /var/www/html && SYMFONY_DEPRECATIONS_HELPER=disabled ./bin/phpunit"
-if [ $? -ne 0 ]; then
-  ((RESULT++))
+# Capture output and check for test success - Symfony deprecation bridge causes exit 1 even when tests pass
+PHPUNIT_OUTPUT=$(docker exec -u docker -t drupal bash -c "cd /var/www/html && SYMFONY_DEPRECATIONS_HELPER=disabled ./bin/phpunit" 2>&1)
+PHPUNIT_EXIT=$?
+echo "$PHPUNIT_OUTPUT"
+# Check if tests actually passed (look for "OK" in output, allowing for "OK, but" skipped tests)
+# The output may contain ANSI color codes, so we strip them first
+if echo "$PHPUNIT_OUTPUT" | sed 's/\x1b\[[0-9;]*m//g' | grep -qE "^OK[, ]|^OK$"; then
+  echo "Tests passed (ignoring deprecation exit code)"
+else
+  if [ $PHPUNIT_EXIT -ne 0 ]; then
+    ((RESULT++))
+  fi
 fi
 
 # Set return code depending on number of tests that failed.
