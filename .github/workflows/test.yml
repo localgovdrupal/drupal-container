@@ -32,6 +32,9 @@ jobs:
       - name: Create LocalGov Drupal project
         run: composer create-project --stability dev localgovdrupal/localgov-project ./html "${{ matrix.localgov-version }}"
 
+      - name: Install optional module dependencies for tests
+        run: composer --working-dir=./html require --dev drupal/group
+
       - name: Obtain all dev dependencies for LocalGov Drupal
         run: jq --raw-output '.packages[] | select(.name | startswith("localgovdrupal/")) | ."require-dev" | values | to_entries[] | @sh "\(.key):\(.value)"' ./html/composer.lock | sort | uniq | xargs composer --working-dir=./html require --dev --no-interaction
 
