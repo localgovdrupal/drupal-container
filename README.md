@@ -19,9 +19,23 @@ docker-compose stop
 
 ## Building the Docker image
 
-The Docker image lives in [Docker Hub](https://hub.docker.com/repository/docker/localgovdrupal/apache-php). Ask in [Slack](https://localgovdrupal.slack.com/) if you need the permissions to push new images.
+### Automated builds (GHCR)
 
-Build with:
+Multi-architecture images (amd64/arm64) are automatically built and pushed to GitHub Container Registry on every push to `php*` branches:
+
+```
+ghcr.io/<owner>/drupal-container:<php-version>-apache
+```
+
+For example: `ghcr.io/localgovdrupal/drupal-container:php-8.3-apache`
+
+You can also trigger a build manually via the [Actions tab](../../actions/workflows/build-push.yml).
+
+### Manual builds (Docker Hub)
+
+The Docker image also lives in [Docker Hub](https://hub.docker.com/repository/docker/localgovdrupal/apache-php). Ask in [Slack](https://localgovdrupal.slack.com/) if you need the permissions to push new images.
+
+Build and push manually with:
 
 ```bash
 export branch=$(git symbolic-ref --short HEAD)
