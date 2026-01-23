@@ -7,6 +7,9 @@ on:
   pull_request:
     branches:
       - php*
+  merge_group:
+    branches:
+      - php*
 
 jobs:
   test:
