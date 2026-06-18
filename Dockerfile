@@ -30,6 +30,7 @@ RUN apt-get update && \
       intl \
       mbstring \
       mysqli \
+      pcntl \
       pdo \
       pdo_mysql \
       zip  && \
